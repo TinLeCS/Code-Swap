@@ -27,8 +27,8 @@
     @foreach (var item in Model.Lists)
     {
         <tr>
-            <td style="border: 1px solid black; background-color: @item.Color">
-                @Html.ActionLink(item.ListName, "ItemIndex", "ShoppingListItem", new { id = item.ListId }, null)
+            <td style="border: 1px solid black">
+                @Html.ActionLink(item.ListName, "ItemIndex", "ShoppingListItem", new { id = item.ListId }, new { @style = "color:" + @item.Color })
             </td>
             <td style="border: 1px solid black; text-align: center">
                 <div class="btn-group btn-group-xs">

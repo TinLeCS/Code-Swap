@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using static ShoppingList.Data.IdentityModel;
 
 namespace ShoppingList.Models
 {
@@ -26,5 +27,15 @@ namespace ShoppingList.Models
         public PriorityLevel Priority { get; set; }
         public DateTimeOffset CreatedUtc { get; set; }
         public DateTimeOffset? ModifiedUtc { get; set; }
+        public string Color
+        {
+            get
+            {
+                using (var ctx = new ShoppingListDbContext())
+                {
+                    return ctx.Lists.Where(e => e.ListId == ShoppingListId).SingleOrDefault().Color;
+                }
+            }
+        }
     }
 }

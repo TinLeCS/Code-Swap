@@ -163,6 +163,12 @@
     <Compile Include="ShoppingListPageViewModel.cs" />
     <Compile Include="ShoppingListViewModel.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ShoppingList.Data\ShoppingList.Data.csproj">
+      <Project>{6AEFBEDB-9E1C-4930-B2D6-72F2CA56ABC5}</Project>
+      <Name>ShoppingList.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

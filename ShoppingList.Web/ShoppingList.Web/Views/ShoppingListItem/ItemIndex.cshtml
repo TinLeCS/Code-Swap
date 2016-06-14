@@ -35,7 +35,7 @@
 
     @foreach (var item in Model)
     {
-        <tr style="border: 1px solid black;">
+        <tr style="border: 1px solid black; color: @item.Color">
             <td style="border: 1px solid black; text-align: center;">
                 <input type="checkbox" name="CheckedIds" class="CheckBoxId" value="@item.ItemId" /></td>
             <td style="border: 1px solid black; text-align: center;">
