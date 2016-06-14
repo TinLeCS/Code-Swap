@@ -11,7 +11,7 @@
                 new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
     <div class="form-horizontal">
         <h4>List Item</h4>
         <hr />
@@ -26,7 +26,6 @@
             @Html.Label("Image", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.TextBox("File", "", new { @class = "form-control-static", @type = "file"})
-                @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="form-group">

@@ -98,6 +98,13 @@ namespace ShoppingList.Web.Controllers
                 ModelState.AddModelError("", "You are only able to upload a JPG, JPEG, PNG file.");
                 return View(vm);
             }
+
+            if (file.ContentLength > 4 * 1024)
+            {
+                ModelState.AddModelError("", "The image size cannot exceed 4 MB.");
+                return View(vm);
+            }
+
             var result = _svc.Value.CreateItem(vm, id);
 
             if (result[0] != 1)
@@ -106,26 +113,24 @@ namespace ShoppingList.Web.Controllers
                 return View(vm);
             }
 
-            if (Request.Files.AllKeys.Any())
+            // Get the uploaded image from the Files collection
+            if (file != null && file.ContentLength > 0)
             {
-                // Get the uploaded image from the Files collection
+                // create an Item folder inside ~/Content folder
+                Directory.CreateDirectory(Server.MapPath("~/Content/Item"));
 
-                if (file != null && file.ContentLength > 0)
-                {
-                    // create an Item folder inside ~/Content folder
-                    Directory.CreateDirectory(Server.MapPath("~/Content/Item"));
+                // store the image inside ~/Content/Item folder
+                // a little trick to prevent file stored as the same name with a different type
+                var path = GetDefaultPath(result[1]);
 
-                    // store the image inside ~/Content/Item folder
-                    // a little trick to prevent file stored as the same name with a different type
-                    var path = GetDefaultPath(result[1]);
+                var image = Image.FromStream(file.InputStream, true, true);
 
-                    var image = Image.FromStream(file.InputStream, true, true);
-
-                    image = ResizeImage(image, 200, 200);
-                    image.Save(path);
-                }
+                image = ResizeImage(image, 200, 200);
+                image.Save(path);
             }
+            
             return RedirectToAction("ItemIndex", new { id = Url.RequestContext.RouteData.Values["id"] });
+            
         }
 
         [HttpGet]
@@ -147,11 +152,46 @@ namespace ShoppingList.Web.Controllers
         public ActionResult EditItem(ShoppingListItemEditViewModel vm, int id)
         {
             if (!ModelState.IsValid) return View(vm);
-            if (!_svc.Value.EditItem(vm))
+
+            var file = Request.Files["File"];
+            var allowedExtensions = new[] { ".jpg", ".png", ".jpeg" };
+            var extension = Path.GetExtension(file.FileName);
+
+            if (file.ContentLength > 0 && !allowedExtensions.Contains(extension))
+            {
+                ModelState.AddModelError("", "You are only able to upload a JPG, JPEG, PNG file.");
+                return View(vm);
+            }
+
+            if (file.ContentLength > 4 * 1024)
+            {
+                ModelState.AddModelError("", "The image size cannot exceed 4 MB.");
+                return View(vm);
+            }
+
+            var result = _svc.Value.EditItem(vm);
+            if (result[0] != 1)
             {
                 ModelState.AddModelError("", "Unable to update note.");
                 return View(vm);
             }
+
+            // Get the uploaded image from the Files collection
+            if (file != null && file.ContentLength > 0)
+            {
+                // create an Item folder inside ~/Content folder
+                Directory.CreateDirectory(Server.MapPath("~/Content/Item"));
+
+                // store the image inside ~/Content/Item folder
+                // a little trick to prevent file stored as the same name with a different type
+                var path = GetDefaultPath(result[1]);
+
+                var image = Image.FromStream(file.InputStream, true, true);
+
+                image = ResizeImage(image, 200, 200);
+                image.Save(path);
+            }
+
             return RedirectToAction("ItemIndex", new { id = vm.ShoppingListId });
         }
 
@@ -193,7 +233,6 @@ namespace ShoppingList.Web.Controllers
                 _svc.Value.DeleteCheckedIds(CheckedIds, Server.MapPath("~/Content/Item"));
             return RedirectToAction("ItemIndex/" + id);
         }
-
 
         public string GetDefaultPath(int id)
         {

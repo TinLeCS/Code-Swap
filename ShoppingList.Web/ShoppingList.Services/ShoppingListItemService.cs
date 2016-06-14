@@ -79,7 +79,7 @@ namespace ShoppingList.Services
             }
         }
 
-        public bool EditItem(ShoppingListItemEditViewModel vm)
+        public int[] EditItem(ShoppingListItemEditViewModel vm)
         {
             using (var ctx = new ShoppingListDbContext())
             {
@@ -95,7 +95,9 @@ namespace ShoppingList.Services
                 entity.Priority = (ShoppingListItemEntity.PriorityLevel)vm.Priority;
                 entity.ModifiedUtc = DateTimeOffset.UtcNow;
 
-                return ctx.SaveChanges() == 1;
+                int[] result = new int[] { ctx.SaveChanges(), entity.ItemId };
+
+                return result;
             }
         }
 
