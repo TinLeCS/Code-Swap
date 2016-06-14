@@ -3,6 +3,10 @@ using ShoppingList.Models;
 using ShoppingList.Services;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -85,10 +89,41 @@ namespace ShoppingList.Web.Controllers
         {
             if (!ModelState.IsValid) return View(vm);
 
-            if (!_svc.Value.CreateItem(vm, id))
+            var file = Request.Files["File"];
+            var allowedExtensions = new[] { ".jpg", ".png", ".jpeg" };
+            var extension = Path.GetExtension(file.FileName);
+
+            if (file.ContentLength > 0 && !allowedExtensions.Contains(extension))
+            {
+                ModelState.AddModelError("", "You are only able to upload a JPG, JPEG, PNG file.");
+                return View(vm);
+            }
+            var result = _svc.Value.CreateItem(vm, id);
+
+            if (result[0] != 1)
             {
                 ModelState.AddModelError("", " Unable to add item.");
                 return View(vm);
+            }
+
+            if (Request.Files.AllKeys.Any())
+            {
+                // Get the uploaded image from the Files collection
+
+                if (file != null && file.ContentLength > 0)
+                {
+                    // create an Item folder inside ~/Content folder
+                    Directory.CreateDirectory(Server.MapPath("~/Content/Item"));
+
+                    // store the image inside ~/Content/Item folder
+                    // a little trick to prevent file stored as the same name with a different type
+                    var path = GetDefaultPath(result[1]);
+
+                    var image = Image.FromStream(file.InputStream, true, true);
+
+                    image = ResizeImage(image, 200, 200);
+                    image.Save(path);
+                }
             }
             return RedirectToAction("ItemIndex", new { id = Url.RequestContext.RouteData.Values["id"] });
         }
@@ -122,7 +157,7 @@ namespace ShoppingList.Web.Controllers
 
         public ActionResult DeleteAllItems()
         {
-            _svc.Value.DeleteAllItems();
+            _svc.Value.DeleteAllItems(Server.MapPath("~/Content/Item"));
             return RedirectToAction("Index", "ShoppingList");
         }
 
@@ -148,14 +183,56 @@ namespace ShoppingList.Web.Controllers
         public ActionResult DeletePost(int id, int ShoppingListId)
         {
             _svc.Value.DeleteItem(id, ShoppingListId);
+            DeleteFile(id);
             return RedirectToAction("ItemIndex/" + ShoppingListId);
         }
 
         public ActionResult DeleteChecked(int id, int[] CheckedIds)
         {
             if (CheckedIds != null && CheckedIds.Length > 0)
-                _svc.Value.DeleteCheckedIds(CheckedIds);
+                _svc.Value.DeleteCheckedIds(CheckedIds, Server.MapPath("~/Content/Item"));
             return RedirectToAction("ItemIndex/" + id);
+        }
+
+
+        public string GetDefaultPath(int id)
+        {
+            return Path.Combine(Server.MapPath("~/Content/Item"), id + ".jpg");
+        }
+
+        public void DeleteFile(int id)
+        {
+            string path = GetDefaultPath(id);
+            FileInfo file = new FileInfo(path);
+            if (file.Exists)
+            {
+                file.Delete();
+            }
+        }
+
+        public static Bitmap ResizeImage(Image image, int width, int height)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return destImage;
         }
     }
 }

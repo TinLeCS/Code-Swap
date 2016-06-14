@@ -22,6 +22,7 @@
         <th style="border: 1px solid black; text-align: center" class="col-sm-1">
             <input type="checkbox" id="checkAll"
         </th>
+        <th>Image</th>
         <th style="border: 1px solid black; text-align: center" class="col-lg-6">
             @Html.ActionLink("Content", "ItemIndex", new { sortOrder = ViewBag.ContentsSortOrder, currentFilter = ViewBag.CurrentFilter, id = Url.RequestContext.RouteData.Values["id"] })
         </th>
@@ -38,6 +39,9 @@
         <tr style="border: 1px solid black; color: @item.Color">
             <td style="border: 1px solid black; text-align: center;">
                 <input type="checkbox" name="CheckedIds" class="CheckBoxId" value="@item.ItemId" /></td>
+            <td style="border: 1px solid black; text-align: center;">
+                <img src="~/@String.Format($"Content/Item/{item.ItemId}.jpg")" alt="No Image"/>
+            </td>
             <td style="border: 1px solid black; text-align: center;">
                 @Html.DisplayFor(modelItem => item.Content)
             </td>

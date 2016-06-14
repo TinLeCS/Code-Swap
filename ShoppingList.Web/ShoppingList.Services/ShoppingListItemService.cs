@@ -2,6 +2,7 @@
 using ShoppingList.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using static ShoppingList.Data.IdentityModel;
@@ -58,7 +59,7 @@ namespace ShoppingList.Services
                 };
         }
 
-        public bool CreateItem(ShoppingListItemCreateViewModel vm, int id)
+        public int[] CreateItem(ShoppingListItemCreateViewModel vm, int id)
         {
             using (var ctx = new ShoppingListDbContext())
             {
@@ -72,8 +73,9 @@ namespace ShoppingList.Services
                     };
 
                 ctx.Items.Add(entity);
+                int[] result = new int[] { ctx.SaveChanges(), entity.ItemId};
 
-                return ctx.SaveChanges() == 1;
+                return result;
             }
         }
 
@@ -110,19 +112,20 @@ namespace ShoppingList.Services
             }
         }
 
-        public bool DeleteAllItems()
+        public bool DeleteAllItems(string path)
         {
             using (var ctx = new ShoppingListDbContext())
             {
                 foreach (ShoppingListItemEntity item in ctx.Items)
                 {
                     ctx.Items.Remove(item);
+                    DeleteFile(path + "\\" + item.ItemId + ".jpg");
                 }
                 return ctx.SaveChanges() == 1;
             }
         }
 
-        public bool DeleteCheckedIds(int[] CheckedIds)
+        public bool DeleteCheckedIds(int[] CheckedIds, string path)
         {
             using (var ctx = new ShoppingListDbContext())
             {
@@ -131,10 +134,23 @@ namespace ShoppingList.Services
                     foreach(var id in CheckedIds)
                     {
                         if (item.ItemId == id)
+                        {
                             ctx.Items.Remove(item);
+                            DeleteFile(path + "\\" + id +".jpg");
+                        }
+                            
                     }
                 }
                 return ctx.SaveChanges() == 1;
+            }
+        }
+
+        public void DeleteFile(string path)
+        {
+            FileInfo file = new FileInfo(path);
+            if (file.Exists)
+            {
+                file.Delete();
             }
         }
     }
