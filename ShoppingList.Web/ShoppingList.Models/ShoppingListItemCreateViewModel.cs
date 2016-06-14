@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using static ShoppingList.Data.IdentityModel;
 
 namespace ShoppingList.Models
 {
@@ -22,5 +23,14 @@ namespace ShoppingList.Models
             GrabItNow = 2
         }
         public PriorityLevel Priority { get; set; }
+
+        public string GetShoppingListName(int id)
+        {
+
+            using (var ctx = new ShoppingListDbContext())
+            {
+                return ctx.Lists.Where(e => e.ListId == id).SingleOrDefault().ListName;
+            }
+        }
     }
 }

@@ -4,7 +4,7 @@
     ViewBag.Title = "CreateItem";
 }
 
-<h2>Add Item</h2>
+<h2>@Model.GetShoppingListName(int.Parse(Url.RequestContext.RouteData.Values["id"].ToString()))</h2>
 
 
 @using (Html.BeginForm())

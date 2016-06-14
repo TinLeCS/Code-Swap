@@ -37,5 +37,15 @@ namespace ShoppingList.Models
                 }
             }
         }
+        public string ShoppingListName
+        {
+            get
+            {
+                using (var ctx = new ShoppingListDbContext())
+                {
+                    return ctx.Lists.Where(e => e.ListId == ShoppingListId).SingleOrDefault().ListName;
+                }
+            }
+        }
     }
 }
