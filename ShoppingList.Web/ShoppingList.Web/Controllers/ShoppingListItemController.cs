@@ -16,6 +16,7 @@ namespace ShoppingList.Web.Controllers
     [Authorize]
     public class ShoppingListItemController : ShoppingListController
     {
+        private const int MB = 1024 * 1024;
         private readonly Lazy<ShoppingListItemService> _svc;
 
         private readonly Lazy<ShoppingListService> _svc2;
@@ -63,7 +64,6 @@ namespace ShoppingList.Web.Controllers
                     ShoppingListItems = ShoppingListItems.OrderBy(s => s.Content);
                     break;
             }
-
             return View("ItemIndex", ShoppingListItems);
         }
 
@@ -99,7 +99,7 @@ namespace ShoppingList.Web.Controllers
                 return View(vm);
             }
 
-            if (file.ContentLength > 4 * 1024)
+            if (file.ContentLength > 4 * MB)
             {
                 ModelState.AddModelError("", "The image size cannot exceed 4 MB.");
                 return View(vm);
@@ -163,7 +163,7 @@ namespace ShoppingList.Web.Controllers
                 return View(vm);
             }
 
-            if (file.ContentLength > 4 * 1024)
+            if (file.ContentLength > 4 * MB)
             {
                 ModelState.AddModelError("", "The image size cannot exceed 4 MB.");
                 return View(vm);

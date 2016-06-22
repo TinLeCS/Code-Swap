@@ -29,6 +29,9 @@ namespace ShoppingList.Models
 
             using (var ctx = new ShoppingListDbContext())
             {
+                //var temp = ctx.Lists.Where(e => e.ListId == id).SingleOrDefault();
+                //var temp1 = temp.ListName;
+                //return "";
                 return ctx.Lists.Where(e => e.ListId == id).SingleOrDefault().ListName;
             }
         }

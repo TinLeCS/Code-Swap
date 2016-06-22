@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using static ShoppingList.Data.IdentityModel;
 
 namespace ShoppingList.Web.Controllers
 {
@@ -28,6 +29,10 @@ namespace ShoppingList.Web.Controllers
         public ActionResult NoteIndex(int id)
         {
             var Notes = _svc.Value.GetNotes(id);
+            using (var ctx = new ShoppingListDbContext())
+            {
+                ViewBag.ShoppingListId = ctx.Items.Where(e => e.ItemId == id).SingleOrDefault().ShoppingListId;
+            };
             return View(Notes);
         }
 

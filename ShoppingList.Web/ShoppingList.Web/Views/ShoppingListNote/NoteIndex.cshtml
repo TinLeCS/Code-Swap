@@ -39,5 +39,5 @@
 </table>
 
 <p class="table">
-    <button class="btn btn-primary btn-lg">@Html.ActionLink("Back to Items", "ItemIndex", "ShoppingListItem", new { id = Url.RequestContext.RouteData.Values["id"] }, new { style = "color:white" })</button>
+    <button class="btn btn-primary btn-lg">@Html.ActionLink("Back to Items", "ItemIndex", "ShoppingListItem", new { id = ViewBag.ShoppingListId}, new { style = "color:white" })</button>
 </p>
