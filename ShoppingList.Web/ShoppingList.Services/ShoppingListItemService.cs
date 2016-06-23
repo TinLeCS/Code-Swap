@@ -114,11 +114,11 @@ namespace ShoppingList.Services
             }
         }
 
-        public bool DeleteAllItems(string path)
+        public bool DeleteAllItems(string path, int shoppingListId)
         {
             using (var ctx = new ShoppingListDbContext())
             {
-                foreach (ShoppingListItemEntity item in ctx.Items)
+                foreach (ShoppingListItemEntity item in ctx.Items.Where(i => i.ShoppingListId == shoppingListId))
                 {
                     ctx.Items.Remove(item);
                     DeleteFile(path + "\\" + item.ItemId + ".jpg");

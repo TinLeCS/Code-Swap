@@ -19,8 +19,6 @@ namespace ShoppingList.Web.Controllers
         private const int MB = 1024 * 1024;
         private readonly Lazy<ShoppingListItemService> _svc;
 
-        private readonly Lazy<ShoppingListService> _svc2;
-
         public ShoppingListItemController()
         {
             _svc =
@@ -90,12 +88,12 @@ namespace ShoppingList.Web.Controllers
             if (!ModelState.IsValid) return View(vm);
 
             var file = Request.Files["File"];
-            var allowedExtensions = new[] { ".jpg", ".png", ".jpeg" };
+            var allowedExtensions = new[] { ".jpg", ".png", ".jpeg", ".bmp", ".gif"};
             var extension = Path.GetExtension(file.FileName);
 
             if (file.ContentLength > 0 && !allowedExtensions.Contains(extension))
             {
-                ModelState.AddModelError("", "You are only able to upload a JPG, JPEG, PNG file.");
+                ModelState.AddModelError("", "You are only allowed to upload a JPG, JPEG, PNG, BMP, GIF file.");
                 return View(vm);
             }
 
@@ -195,9 +193,9 @@ namespace ShoppingList.Web.Controllers
             return RedirectToAction("ItemIndex", new { id = vm.ShoppingListId });
         }
 
-        public ActionResult DeleteAllItems()
+        public ActionResult DeleteAllItems(int id)
         {
-            _svc.Value.DeleteAllItems(Server.MapPath("~/Content/Item"));
+            _svc.Value.DeleteAllItems(Server.MapPath("~/Content/Item"), id);
             return RedirectToAction("Index", "ShoppingList");
         }
 

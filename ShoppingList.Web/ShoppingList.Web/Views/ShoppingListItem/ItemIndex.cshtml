@@ -10,7 +10,7 @@
 
 <div style="display: inline-block; float: right; padding-top: 2.2%;">
     <button type="button" style="background-color: #ffcc99;">@Html.ActionLink("Add New Item", "CreateItem", "ShoppingListItem", new { Id = Url.RequestContext.RouteData.Values["id"] }, null)</button>
-    <button type="button" style="background-color: #ffcc99;">@Html.ActionLink("Delete all items", "DeleteAllItems")</button>
+    <button type="button" style="background-color: #ffcc99;">@Html.ActionLink("Delete all items", "DeleteAllItems", new { id = Url.RequestContext.RouteData.Values["id"]})</button>
     <button type="button" style="background-color: #ffcc99;" onclick="javascript: (function () { document.checked.submit(); return void (0); })();">Delete Checked Items</button>
 </div>
 
@@ -20,7 +20,7 @@
 <table class="table">
     <tr style="background-color: #ffcc99;  border: 1px solid black;">
         <th style="border: 1px solid black; text-align: center" class="col-sm-1">
-            <input type="checkbox" id="checkAll"
+            <input type="checkbox" id="checkAll"/>
         </th>
         <th>Image</th>
         <th style="border: 1px solid black; text-align: center" class="col-lg-6">
