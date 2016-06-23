@@ -74,8 +74,6 @@ namespace ShoppingList.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeletePost(int id)
         {
-            //var temp = _itemSvc.Value;
-            //temp.DeleteAllItems(Server.MapPath("~/Content/Item"), id);
             _itemSvc.Value.DeleteAllItems(Server.MapPath("~/Content/Item"), id);
             _svc.Value.DeleteList(id);
 

@@ -1,4 +1,3 @@
-<script type="text/javascript">
 	var validFilesTypes = ["BMP", "GIF", "PNG", "JPG", "JPEG"];
 
 	function CheckExtension(file) {
@@ -21,9 +20,7 @@
 
 		return isValidFile;
 	}
-</script>
 
-<script type="text/javascript">
 	var validFileSize = 4 * 1024 * 1024;
 
 	function CheckFileSize(file) {
@@ -39,9 +36,7 @@
 		}
 		return isValidFile;
 	}
-</script>
 
-<script type="text/javascript">
 	function CheckFile(file) {
 		var isValidFile = CheckExtension(file);
 
@@ -50,4 +45,3 @@
 
 		return isValidFile;
 	}
-</script>
